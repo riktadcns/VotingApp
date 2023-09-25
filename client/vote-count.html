@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="vote-count.css"> 
+    <title>PPoll Voting System - Vote Count</title>
+</head>
+<body>
+    <h1>Vote Count</h1>
+
+    <table id="voteCountTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Organization</th>
+                <th>Votes</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+       document.addEventListener("DOMContentLoaded", getVoteCount);
+
+async function getVoteCount() {
+    const voteCountTable = document.getElementById('voteCountTable').getElementsByTagName('tbody')[0];
+
+    try {
+        const response = await fetch('/api/vote-count');
+        if (response.ok) {
+            const voteCountData = await response.json();
+            voteCountTable.innerHTML = '';
+            voteCountData.forEach(item => {
+                const row = voteCountTable.insertRow();
+                const nameCell = row.insertCell(0);
+                const orgCell = row.insertCell(1);
+                const votesCell = row.insertCell(2);
+
+                nameCell.textContent = item.PName;
+                orgCell.textContent = item.POrganization;
+                votesCell.textContent = item.votes;
+            });
+        } else {
+            const error = await response.json();
+            voteCountTable.innerHTML = `<tr><td colspan="3">Error: ${error.message}</td></tr>`;
+            voteCountTable.style.color = 'red';
+        }
+    } catch (error) {
+        console.error(error);
+        voteCountTable.innerHTML = `<tr><td colspan="3">An error occurred while fetching the vote count.</td></tr>`;
+        voteCountTable.style.color = 'red';
+    }
+}
+
+    </script>
+</body>
+</html>

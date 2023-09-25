@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Voter Registration</title>
+    <link rel="stylesheet" href="voterReg.css">
+</head>
+<body>
+    <header>
+        <h1>Voter Registration Form</h1>
+    </header>
+    <main>
+        <section>
+           
+            <form id="registrationForm">
+                <label for="VoterId">Voter ID:</label>
+                <input type="text" id="VoterId" name="VoterId" required>
+                <br>
+                <label for="VoterName">Voter Name:</label>
+                <input type="text" id="VoterName" name="VoterName" required>
+                <br>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <br>    
+                <label for="DateOfBirth">Date of Birth:</label>
+                <input type="date" id="DateOfBirth" name="DateOfBirth" required
+                 min="1900-01-01" max="2099-12-31" pattern="\d{4}-\d{2}-\d{2}">
+                <br>
+                <label for="VoterPassword">Password:</label>
+                <input type="password" id="VoterPassword" name="VoterPassword" required>
+                <br>
+                <a href="emailverification.html"><button class="btn">Register</button></a>
+            </form>
+        </section>
+        
+        
+    <div id="message"></div>
+
+    <script>
+        document.getElementById("registrationForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const voterId = document.getElementById("VoterId").value;
+            const voterName = document.getElementById("VoterName").value;
+            const email = document.getElementById("email").value; 
+            const dateOfBirth = document.getElementById("DateOfBirth").value;
+            const voterPassword = document.getElementById("VoterPassword").value;
+
+            const response = await fetch("/api/voter-register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    VoterId: voterId,
+                    VoterName: voterName,
+                    email: email, 
+                    DateOfBirth: dateOfBirth,
+                    VoterPassword: voterPassword,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById("message").textContent = result.message;
+                window.location.href = "emailverification.html";
+
+            } else {
+                document.getElementById("message").textContent = `Error: ${result.message}`;
+
+            }
+        });
+    </script>
+</body>
+</html>

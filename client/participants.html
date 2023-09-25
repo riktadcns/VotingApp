@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPoll Voting System</title>
+    <link rel="stylesheet" href="participants.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to the PPoll Voting System</h1>
+    </header>
+
+    <main>
+        <section id="participants">
+            <h2>List of Participants</h2>
+            <form id="voteForm">
+                <ul id="participantsList">
+                   
+                </ul>
+                <button type="submit">Vote</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const voteForm = document.getElementById('voteForm');
+        const participantsList = document.getElementById('participantsList');
+
+        async function getParticipantsList() {
+            try {
+                const response = await fetch('/api/participants');
+                if (response.ok) {
+                    const participants = await response.json();
+                    participantsList.innerHTML = participants.map(participant => `
+                        <li>
+                            <label>
+                                <input type="radio" name="participant" value="${participant.PName}:${participant.POrganization}">
+                                ${participant.PName} (${participant.POrganization})
+                            </label>
+                        </li>`
+                    ).join('');
+                } else {
+                    const error = await response.json();
+                    participantsList.innerHTML = `Error: ${error.message}`;
+                }
+            } catch (error) {
+                console.error(error);
+                participantsList.innerHTML = 'An error occurred while fetching the participant list.';
+            }
+        }
+
+        voteForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(voteForm);
+            const selectedParticipant = formData.get('participant');
+
+            if (!selectedParticipant) {
+                alert('Please select a participant to vote for.');
+                return;
+            }
+
+            const [PName, POrganization] = selectedParticipant.split(':');
+
+            try {
+                const response = await fetch('/api/participants/vote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ PName, POrganization }),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message);
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.message}`);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while voting.');
+            }
+        });
+
+        getParticipantsList();
+    </script>
+</body>
+</html>

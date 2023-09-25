@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Participant Login</title>
+    <link rel="stylesheet" href="participantsLogin.css">
+</head>
+<body>
+    <form id="login-form">
+        <label for="PId">Participant ID:</label>
+        <input type="text" id="PId" name="PId" required><br><br>
+
+        <label for="Ppassword">Password:</label>
+        <input type="password" id="Ppassword" name="Ppassword" required><br><br>
+
+        <a href="participantsLogin.html"><button class="btn">Login</button></a>
+    </form>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const PId = document.getElementById('PId').value;
+            const Ppassword = document.getElementById('Ppassword').value;
+
+            const response = await fetch('/api/Participants-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ PId, Ppassword })
+            });
+
+            const responseData = await response.json();
+
+            if (response.status === 200) {
+                alert('Login Successful!');
+                window.location.href = "vote-count.html";
+            } else {
+                alert('Login Failed: ' + responseData.message);
+            }
+        });
+    </script>
+</body>
+</html>

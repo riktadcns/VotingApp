@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="emailverification.css"> 
+</head>
+<body>
+    <section>
+        <form id="emailVerificationForm">
+            <h2>Email Verification</h2>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <br>
+            <label for="verificationCode">Verification Code:</label>
+            <input type="text" id="verificationCode" name="verificationCode" required>
+            <br>
+            <button type="submit" class="btn">Verify Email</button>
+        </form>
+        <div id="message"></div>
+    </section>
+
+    <script>
+        document.getElementById("emailVerificationForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const verificationCode = document.getElementById("verificationCode").value;
+
+            const response = await fetch("/api/verify-email", { 
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email,
+                    code: verificationCode,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById("message").textContent = result.message;
+                window.location.href = "participants.html";
+            } else {
+                document.getElementById("message").textContent = `Error: ${result.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

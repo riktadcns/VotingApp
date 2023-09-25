@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <link rel="stylesheet" href="saveRpass.css">
+</head>
+<body>
+    <section>
+        <h1>Reset Password</h1>
+        <form id="resetPasswordForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="verificationCode">Verification Code:</label>
+            <input type="text" id="verificationCode" name="verificationCode" required>
+            <label for="newPassword">New Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+            <button type="submit">Reset Password</button>
+        </form>
+        <div id="message"></div>
+    </section>
+
+    <script>
+        document.getElementById('resetPasswordForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const verificationCode = document.getElementById('verificationCode').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            try {
+                const response = await fetch('/api/save-reset-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, code: verificationCode, newPassword }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById("message").textContent = data.message;
+                    window.location.href = "login.html";
+                } else {
+                    document.getElementById("message").textContent = `Error ${data.code}: ${data.message}`;
+                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while resetting the password.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Registration</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <header>
+        <h1>Voter Registration</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Login Form</h2>
+            <form id="loginForm">
+                <label for="LoginVoterId">Voter ID:</label>
+                <input type="text" id="LoginVoterId" name="VoterId" required>
+                <br>
+                <label for="LoginVoterPassword">Password:</label>
+                <input type="password" id="LoginVoterPassword" name="VoterPassword" required>
+                <br>
+                <a href="participants.html"><button class="btn">Login</button></a>
+            </form>
+            <p>Don't have an account? <a href="voterReg.html">Register</button></p>
+              <a href="resetpassword.html">Reset Password</button>
+        </section>
+    </main>
+    <div id="message"></div>
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const showRegistrationFormButton = document.getElementById("showRegistrationForm");
+
+        loginForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const voterId = document.getElementById("LoginVoterId").value;
+            const voterPassword = document.getElementById("LoginVoterPassword").value;
+
+            const response = await fetch("/api/voter-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    VoterId: voterId,
+                    VoterPassword: voterPassword,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById("message").textContent = result.message;
+                window.location.href = "participants.html";
+            } else {
+                document.getElementById("message").textContent = `Error: ${result.message}`;
+            }
+        });
+
+        showRegistrationFormButton.addEventListener("click", function(event) {
+            event.preventDefault();
+            
+         
+        });
+    </script>
+</body>
+</html>
