@@ -1,5 +1,6 @@
 import { VoterController } from "../controller/voters.controller.js";
 import { Voter } from "../models/voters.js";
+import { VoterAuthorize } from "../middleware/voterAuth.js";
 
 
 export const VoterRoute = (app) => {

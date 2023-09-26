@@ -1,11 +1,12 @@
 import { ParticipantsController } from "../controller/participants.controller.js";
 import { Participants } from "../models/participants.js";
+import {ParticipantAuthorize} from "../middleware/participantsAuth.js"
 
 
 export const ParticipantsRoute = (app) => {
 
 // Participants Login
-app.post("/api/Participants-login", async(req,res)=>{
+app.post("/api/Participants-login",async(req,res)=>{
     const {PId, Ppassword} = req.body;
 try
 {    
